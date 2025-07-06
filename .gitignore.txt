@@ -1,0 +1,26 @@
+# ignore database files
+*.db
+
+# Ignore test folder and tests scripts
+tests/
+test_*.py
+
+# Ignore Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+#Ignore virtual environments
+venv/
+.env/
+.env
+
+# Ignore editor/IDE settings
+.vscode/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore VS code workspace file
+workspace_budget.code-workspace
