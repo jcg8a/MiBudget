@@ -49,6 +49,7 @@ class TagsGui(tk.Toplevel):
     def clear_fields(self):
         self.name_entry.delete(0, tk.END)
         self.alias_entry.delete(0, tk.END)
+        self.type_var.set("")
         
     def save_tag(self):
         try:
