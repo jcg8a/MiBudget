@@ -17,7 +17,10 @@ class TagsDB:
                         date_deactivate DATETIME DEFAULT NULL)''',
                         commit = True)
         
-        self.add(tag = "credit payment", alias='Pago tarjeta crédito', type ='Credit')
+        existing =self.db.execute('''SELECT id FROM tags WHERE tag = ? AND type = ?''',
+                                  ("credit payment", "Credit"), commit = False).fetchone()
+        if not existing:
+            self.add(tag = "credit payment", alias='Pago tarjeta crédito', type ='Credit')
         
     def add(self, tag, alias, type):
         self.db.execute('''INSERT INTO tags (
