@@ -136,9 +136,11 @@ class IncomeGui(tk.Toplevel):
         self.originator_var.set("No encontrada")
 
     def clear_fields(self):
+        self.currency_var.set("")
         self.date_entry.delete(0, tk.END)
         self.amount_entry.delete(0, tk.END)
         self.source_entry.delete(0, tk.END)
+        self.tag_var.set("")
         self.comment_entry.delete(0, tk.END)
 
             
