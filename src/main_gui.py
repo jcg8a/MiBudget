@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from wallets_gui import WalletsGui  # asegurate que este archivo exista
+from wallets_gui import WalletsGui
 from transactions_gui import TransactionsGui
 from transfers_gui import TransfersGui
 from currencies_gui import CurrenciesGui
@@ -12,8 +12,13 @@ from payment_credit_gui import PaymentCreditGui
 class MainApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Budget Manager - Inicio")
-        self.root.geometry("300x200")
+        self.root.title("MiBudget - Inicio")
+
+        #window size - multiplatform
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        root.geometry(f"{screen_width}x{screen_height}")
+        #self.root.geometry("300x200")
 
         self.frame = ttk.Frame(self.root, padding=20)
         self.frame.pack(expand=True)
