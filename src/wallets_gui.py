@@ -73,6 +73,8 @@ class WalletsGui(tk.Toplevel):
         self.alias_entry.delete(0, tk.END)
         self.fi_entry.delete(0, tk.END)
         self.country_entry.delete(0, tk.END)
+        self.type_var.set("")
+        self.currency_var.set("")
 
     def save_wallet(self):
         try:
