@@ -34,7 +34,7 @@ class ExpenseGui(tk.Toplevel):
         self.date_entry.insert(0, datetime.today().strftime('%Y-%m-%d'))
         self.date_entry.pack(pady=5)
 
-        ttk.Label(self, text="Wallet").pack()
+        ttk.Label(self, text="Billetera").pack()
         self.wallet_var = tk.StringVar()
         self.wallet_combo = ttk.Combobox(self, textvariable=self.wallet_var, values=list(self.wallet_name_to_id.keys()), state='readonly')
         self.wallet_combo.pack(pady=5)
@@ -53,11 +53,11 @@ class ExpenseGui(tk.Toplevel):
         self.installments_entry.insert(0, "1")
         self.installments_entry.pack(pady=5)
 
-        ttk.Label(self, text="Fuente (tarjeta, tienda...)").pack()
+        ttk.Label(self, text="Descripción").pack()
         self.source_entry = ttk.Entry(self)
         self.source_entry.pack(pady=5)
 
-        ttk.Label(self, text="Categoría").pack()
+        ttk.Label(self, text="Etiqueta").pack()
         self.tag_var = tk.StringVar()
         self.tag_combo = ttk.Combobox(self, textvariable=self.tag_var, values=list(self.tag_name_to_id.keys()), state='readonly')
         self.tag_combo.pack(pady=5)
