@@ -19,6 +19,7 @@ class ExpenseGui(tk.Toplevel):
         self.tags_db = TagsDB(DatabaseManager())
 
         self.wallets = self.wallets_db.list()
+        self.wallets = [w for w in self.wallets if w[2] == "Credit"]
         self.currencies = self.currencies_db.list()
         self.tags = self.tags_db.list()
 
