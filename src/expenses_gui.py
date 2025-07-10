@@ -22,6 +22,7 @@ class ExpenseGui(tk.Toplevel):
         self.wallets = [w for w in self.wallets if w[2] == "Credit"]
         self.currencies = self.currencies_db.list()
         self.tags = self.tags_db.list()
+        self.tags = [t for t in self.tags if t[3] == "Expense"]
 
         self.wallet_name_to_id = {w[1]: w[0] for w in self.wallets}
         self.currency_name_to_id = {c[2]: c[0] for c in self.currencies}  # Asume que c[2] es nombre
