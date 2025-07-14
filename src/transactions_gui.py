@@ -130,7 +130,8 @@ class TransactionsGui(tk.Toplevel):
     def clear_fields(self):
         self.date_entry.delete(0, tk.END)
         self.date_entry.insert(0, datetime.today().strftime('%Y-%m-%d'))
-        self.currency_combo.delete(0, tk.END)
+        #self.currency_combo.delete(0, tk.END)
+        self.currency_combo.set("")
         self.amount_entry.delete(0, tk.END)
         self.source_entry.delete(0, tk.END)
         self.tag_combo.delete(0, tk.END)
