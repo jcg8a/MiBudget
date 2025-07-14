@@ -19,7 +19,7 @@ class TransactionsGui(tk.Toplevel):
         self.tags_db = TagsDB(DatabaseManager())
 
         self.wallets = self.wallets_db.list(include_inactive=False)
-        self.wallet_name_to_id = {w[1]: w[0] for w in self.wallets if 'originator' not in w[2]}
+        self.wallet_name_to_id = {w[3]: w[0] for w in self.wallets if 'originator' not in w[2]}
         #self.wallet_info = {w[1]: {"id": w[0], "currency": w[2]} for w in self.wallets}
 
         self.currencies = self.currencies_db.list()
