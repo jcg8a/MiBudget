@@ -113,8 +113,9 @@ class TransactionsGui(tk.Toplevel):
                 self.currency_name_to_id.get(self.currency_combo.get()),
                 self.amount_entry.get(),
                 self.source_entry.get(),
-                self.currency_name_to_id.get(self.tag_combo.get()),
+                self.tags_name_to_id.get(self.tag_combo.get()),
                 wallet_id,
+                None,
                 self.comment_entry.get()
             )
 
