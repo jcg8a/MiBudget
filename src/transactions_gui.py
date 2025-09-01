@@ -31,8 +31,12 @@ class TransactionsGui(tk.Toplevel):
         self.tags_name_to_id = {cur[2]: cur[0] for cur in self.tags}
 
         self.build_form()
+        self.message_label = ttk.Label(self, text = "")
+        self.message_label.pack(pady = 5)
         self.build_listbox()
         self.refresh_transactions()
+
+       
         
 
     def build_form(self):
@@ -120,12 +124,12 @@ class TransactionsGui(tk.Toplevel):
             )
 
             self.db.add(*data)
-            messagebox.showinfo("Éxito", "Transacción guardada")
+            self.show_message("Transacción guardada con éxito", "green")
             self.refresh_transactions()
             self.clear_fields()
 
         except Exception as e:
-            messagebox.showerror("Error", f"No se pudo guardar la transacción: {e}")
+            self.show_message(f"Error al guardar: {e}", "red")
 
     def clear_fields(self):
         self.date_entry.delete(0, tk.END)
@@ -137,3 +141,13 @@ class TransactionsGui(tk.Toplevel):
         self.tag_combo.delete(0, tk.END)
         self.wallets_combo.set("")
         self.comment_entry.delete(0, tk.END)
+
+    def show_message(self, text, color = 'black'):
+        # Remove any previous temp
+        if hasattr(self, "_msg_after_id"):
+            self.after_cancel(self._msg_after_id)
+
+        self.message_label.config(text = text, foreground=color)
+        #set it up to disappear after 10 seconds
+        self._msg_after_id = self.after(10000, lambda: self.message_label.config(text = ""))
+        
