@@ -29,6 +29,8 @@ class ExpenseGui(tk.Toplevel):
         self.tag_name_to_id = {t[2]: t[0] for t in self.tags}
 
         self.build_form()
+        self.message_label = ttk.Label(self, text = "")
+        self.message_label.pack(pady = 5)
 
     def build_form(self):
         ttk.Label(self, text="Fecha (YYYY-MM-DD)").pack()
@@ -99,11 +101,13 @@ class ExpenseGui(tk.Toplevel):
                 interest_rate=interest
             )
 
-            messagebox.showinfo("Éxito", "Gasto guardado correctamente.")
+            #messagebox.showinfo("Éxito", "Gasto guardado correctamente.")
+            self.show_message("Gasto guardado con éxito", "green")
             self.clear_fields()
 
         except Exception as e:
-            messagebox.showerror("Error", f"No se pudo guardar el gasto: {e}")
+            self.show_message(f"Error al guardar el gasto: {e}", "red")
+            #messagebox.showerror("Error", f"No se pudo guardar el gasto: {e}")
 
     def clear_fields(self):
         self.date_entry.delete(0, tk.END)
@@ -117,3 +121,13 @@ class ExpenseGui(tk.Toplevel):
         self.comment_entry.delete(0, tk.END)
         self.interest_entry.delete(0, tk.END)
         self.interest_entry.insert(0, "0")
+
+        
+    def show_message(self, text, color = 'black'):
+        # Remove any previous temp
+        if hasattr(self, "_msg_after_id"):
+            self.after_cancel(self._msg_after_id)
+
+        self.message_label.config(text = text, foreground=color)
+        #set it up to disappear after 10 seconds
+        self._msg_after_id = self.after(10000, lambda: self.message_label.config(text = ""))
