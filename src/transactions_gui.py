@@ -10,7 +10,7 @@ from tags_db import TagsDB
 class TransactionsGui(tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
-        self.title("Añadir Gasto")
+        self.title("Add payment")
         self.geometry("500x600")
 
         self.db = TransactionsDB(DatabaseManager())
