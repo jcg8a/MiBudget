@@ -100,7 +100,6 @@ class ExpenseGui(tk.Toplevel):
             )
 
             messagebox.showinfo("Éxito", "Gasto guardado correctamente.")
-            self.destroy()
 
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo guardar el gasto: {e}")
