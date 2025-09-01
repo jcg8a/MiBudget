@@ -100,6 +100,20 @@ class ExpenseGui(tk.Toplevel):
             )
 
             messagebox.showinfo("Éxito", "Gasto guardado correctamente.")
+            self.clear_fields()
 
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo guardar el gasto: {e}")
+
+    def clear_fields(self):
+        self.date_entry.delete(0, tk.END)
+        self.date_entry.insert(0, datetime.today().strftime('%Y-%m-%d'))
+        self.wallet_combo.set("")
+        self.currency_combo.set("")
+        self.amount_entry.delete(0, tk.END)
+        self.installments_entry.delete(0, tk.END)
+        self.source_entry.delete(0, tk.END)
+        self.tag_combo.set("")
+        self.comment_entry.delete(0, tk.END)
+        self.interest_entry.delete(0, tk.END)
+        self.interest_entry.insert(0, "0")
