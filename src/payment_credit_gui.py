@@ -83,6 +83,11 @@ class PaymentCreditGui(tk.Toplevel):
             
         self.expenses_tree.pack(fill="both", expand=True, pady=5)
 
+        # Label showing the total amount of outstanding installments
+        self.total_outstanding = tk.StringVar(value="Total: 0.00")
+        self.total_label = ttk.Label(self, textvariable=self.total_outstanding)
+        self.total_label.pack(pady=(4, 10))
+
         ttk.Label(self, text="Descripción").pack()
         self.source_entry = ttk.Entry(self)
         self.source_entry.pack(pady=5)
@@ -139,10 +144,15 @@ class PaymentCreditGui(tk.Toplevel):
         start_date = self.start_date_entry.get()
         end_date = self.end_date_entry.get()
         wallet_credit_id = self.wallet_credit_name_to_id.get(self.wallet_credit_var.get())
+        total_amount = 0.0
 
         # Clean table
         for row in self.expenses_tree.get_children():
             self.expenses_tree.delete(row)
+
+        if not wallet_credit_id:
+            messagebox.showwarning("Debes seleccionar una tarjeta de crédito")
+            return
 
         # Query expenses in the interval
         current_expenses = self.expenses_db.get_current_unpaid_expenses(wallet_credit_id, start_date, end_date)
@@ -162,6 +172,10 @@ class PaymentCreditGui(tk.Toplevel):
                 exp[6], #tag_id
                 exp[7] #comment
             ))
+            try:
+                total_amount += float(exp[4])
+            except (ValueError, IndexError):
+                pass
 
         for exp in older_expenses:
             self.expenses_tree.insert("", "end", values=(
@@ -174,5 +188,10 @@ class PaymentCreditGui(tk.Toplevel):
                 exp[6], #tag_id
                 exp[7] #comment
             ), tags=("oldest",))
+            try:
+                total_amount += float(exp[4])
+            except (ValueError, IndexError):
+                pass
 
         self.expenses_tree.tag_configure("oldest", background="lightyellow")
+        self.total_outstanding.set(f"Total: {total_amount}")
