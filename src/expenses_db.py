@@ -131,3 +131,17 @@ class ExpenseDB:
         ORDER BY expense_id ASC, installment_number ASC"""
 
         return self.db.execute(query, (wallet_id, start_date, end_date), commit = False).fetchall()
+    
+    def get_oldest_unpaid_expenses(self, wallet_id, start_date):
+        query = """SELECT e.id, e.expense_id, e.date, e.installment_number, e.amount_installment, e.source, e.tag_id, e.comment
+        FROM expenses e
+        INNER JOIN (
+        SELECT expense_id, MIN(id) as min_id
+        FROM expenses
+        WHERE wallet_id = ?
+        AND payment_id IS NULL
+        AND date < ?
+        GROUP BY expense_id) sub ON e.id = sub.min_id
+        ORDER BY e.date ASC"""
+
+        return self.db.execute(query, (wallet_id, start_date), commit = False).fetchall()
