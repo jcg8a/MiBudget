@@ -122,13 +122,18 @@ class ExpenseDB:
                         (payment_id, expense_row_id),
                         commit =True)
         
+    
     def get_current_unpaid_expenses(self, wallet_id, start_date, end_date):
-        query = """SELECT id, expense_id, date, installment_number, amount_installment, source, tag_id, comment
+        query = """SELECT e.id, e.expense_id, e.date, e.installment_number, e.amount_installment, e.source, e.tag_id, e.comment
+        FROM expenses e
+        INNER JOIN (
+        SELECT expense_id, MIN(id) as min_id
         FROM expenses
         WHERE wallet_id = ?
         AND payment_id IS NULL
-        AND date BETWEEN ? AND ?
-        ORDER BY expense_id ASC, installment_number ASC"""
+        and date BETWEEN ? AND ?
+        GROUP BY expense_id) sub ON e.id = sub.min_id
+        ORDER BY e.date ASC"""
 
         return self.db.execute(query, (wallet_id, start_date, end_date), commit = False).fetchall()
     
