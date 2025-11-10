@@ -123,6 +123,20 @@ class TransfersGui(tk.Toplevel):
                           "amt_entry": amount})
         self.fee_count += 1
 
+
+    def clear_fields(self):
+        self.date_entry.delete(0, tk.END)
+        self.date_entry.insert(0, datetime.today().strftime('%Y-%m-%d'))
+        self.from_wallet_combo.set("")
+        self.to_wallet_combo.set("")
+        self.currency_out_combo.set("")
+        self.amount_out_entry.delete(0, tk.END)
+        self.currency_in_combo.set("")
+        self.amount_in_entry.delete(0, tk.END)
+        self.rate_entry.delete(0, tk.END)
+        self.comment_entry.delete(0, tk.END)
+
+
     def save_transfer(self):
         try:
             from_wallet_id = self.wallet_name_to_id.get(self.from_wallet_var.get())
@@ -162,6 +176,7 @@ class TransfersGui(tk.Toplevel):
             )
             #print(fees_data)
             messagebox.showinfo("Éxito", "Transferencia guardada correctamente")
+            self.clear_fields()
 
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo guardar la transferencia: {e}")
