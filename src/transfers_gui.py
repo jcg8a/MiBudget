@@ -162,7 +162,6 @@ class TransfersGui(tk.Toplevel):
             )
             #print(fees_data)
             messagebox.showinfo("Éxito", "Transferencia guardada correctamente")
-            self.destroy()
 
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo guardar la transferencia: {e}")
