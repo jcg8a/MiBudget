@@ -74,8 +74,10 @@ class PaymentCreditGui(tk.Toplevel):
         ttk.Button(self, text="Buscar gastos cubiertos", command=self.show_expenses).pack(pady=(8,6))
 
        #Treeview to show query results
-        columns = ("id", "fecha", "monto", "descripción", "estado")
-        self.expenses_tree = ttk.Treeview(self, columns=columns, show="headings", height=8)
+        #columns = ("id", "fecha", "monto", "descripción", "estado")
+        columns = ("id", "expense_id", "date", "installment_number", "amount_installment", "source", "tag_id", "comment", "min_id", "category")
+        #self.expenses_tree = ttk.Treeview(self, columns=columns, show="headings", height=8)
+        self.expenses_tree = ttk.Treeview(self, columns=columns, show="tree headings", selectmode="extended", height=8)
 
         for col in columns:
             self.expenses_tree.heading(col, text=col.capitalize())
@@ -140,6 +142,7 @@ class PaymentCreditGui(tk.Toplevel):
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo registrar el pago: {e}")
 
+
     def show_expenses(self):
         start_date = self.start_date_entry.get()
         end_date = self.end_date_entry.get()
@@ -153,45 +156,35 @@ class PaymentCreditGui(tk.Toplevel):
         if not wallet_credit_id:
             messagebox.showwarning("Debes seleccionar una tarjeta de crédito")
             return
+        
+        dict_expenses = self.expenses_db.get_unpaid_expenses(wallet_id = wallet_credit_id, 
+                                                             start_date=start_date,
+                                                             end_date=end_date)
+        
+        print(dict_expenses)
 
-        # Query expenses in the interval
-        current_expenses = self.expenses_db.get_current_unpaid_expenses(wallet_credit_id, start_date, end_date)
+        current_expenses = self.expenses_tree.insert("", tk.END, text = "Current expenses")
+        old_expenses = self.expenses_tree.insert("", tk.END, text= "Older expenses")
+        other_expenses = self.expenses_tree.insert("", tk.END, text = "Remaining expenses")
+        selected_current = []
+        selected_older = []
 
-        # Query older expenses
-        older_expenses = self.expenses_db.get_oldest_unpaid_expenses(wallet_credit_id, start_date)
+        for row in dict_expenses['current']:
+            iid = self.expenses_tree.insert(current_expenses, tk.END, values = row, tags = ("current",))
+            selected_current.append(iid)
 
-        # Show in the treeview
-        for exp in current_expenses:
-            self.expenses_tree.insert("", "end", values=(
-                exp[0], #id
-                exp[1], #expense_id
-                exp[2], #date
-                exp[3], #installment_number
-                exp[4], #amount_installment
-                exp[5], #source
-                exp[6], #tag_id
-                exp[7] #comment
-            ))
-            try:
-                total_amount += float(exp[4])
-            except (ValueError, IndexError):
-                pass
+        for row in dict_expenses['older']:
+            iid = self.expenses_tree.insert(old_expenses, tk.END,  values = row, tags = ("older",))
+            selected_older.append(iid)
 
-        for exp in older_expenses:
-            self.expenses_tree.insert("", "end", values=(
-                                exp[0], #id
-                exp[1], #expense_id
-                exp[2], #date
-                exp[3], #installment_number
-                exp[4], #amount_installment
-                exp[5], #source
-                exp[6], #tag_id
-                exp[7] #comment
-            ), tags=("oldest",))
-            try:
-                total_amount += float(exp[4])
-            except (ValueError, IndexError):
-                pass
+        for row in dict_expenses['remaining']:
+            self.expenses_tree.insert(other_expenses, tk.END, values = row, tags = ("remaining",))
 
-        self.expenses_tree.tag_configure("oldest", background="lightyellow")
+        self.expenses_tree.selection_set(selected_current + selected_older)
+
+        self.expenses_tree.item(current_expenses, open=True)
+        self.expenses_tree.item(old_expenses, open=True)
+        self.expenses_tree.item(other_expenses, open=True)
+
+        self.expenses_tree.tag_configure("older", background="lightyellow")
         self.total_outstanding.set(f"Total: {total_amount}")
