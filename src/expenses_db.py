@@ -122,31 +122,51 @@ class ExpenseDB:
                         (payment_id, expense_row_id),
                         commit =True)
         
-    
-    def get_current_unpaid_expenses(self, wallet_id, start_date, end_date):
-        query = """SELECT e.id, e.expense_id, e.date, e.installment_number, e.amount_installment, e.source, e.tag_id, e.comment
-        FROM expenses e
-        INNER JOIN (
-        SELECT expense_id, MIN(id) as min_id
-        FROM expenses
-        WHERE wallet_id = ?
-        AND payment_id IS NULL
-        and date BETWEEN ? AND ?
-        GROUP BY expense_id) sub ON e.id = sub.min_id
-        ORDER BY e.date ASC"""
+        
+    def get_unpaid_expenses(self, wallet_id, start_date, end_date):
+        query = """WITH first_unpaid AS (
+            SELECT expense_id,
+            MIN(id) AS min_id
+            FROM expenses
+            WHERE wallet_id = :wallet_id
+            AND payment_id IS NULL
+            GROUP BY expense_id
+            )
 
-        return self.db.execute(query, (wallet_id, start_date, end_date), commit = False).fetchall()
-    
-    def get_oldest_unpaid_expenses(self, wallet_id, start_date):
-        query = """SELECT e.id, e.expense_id, e.date, e.installment_number, e.amount_installment, e.source, e.tag_id, e.comment
-        FROM expenses e
-        INNER JOIN (
-        SELECT expense_id, MIN(id) as min_id
-        FROM expenses
-        WHERE wallet_id = ?
-        AND payment_id IS NULL
-        AND date < ?
-        GROUP BY expense_id) sub ON e.id = sub.min_id
-        ORDER BY e.date ASC"""
+            SELECT e.id,
+            e.expense_id,
+            e.date,
+            e.installment_number,
+            e.amount_installment,
+            e."source",
+            e.tag_id,
+            e.comment,
+            fu.min_id,
 
-        return self.db.execute(query, (wallet_id, start_date), commit = False).fetchall()
+            CASE 
+            	WHEN fu.min_id = e.id AND e.date BETWEEN :start_date AND :end_date THEN 'current'
+            	WHEN fu.min_id = e.id AND e.date < :start_date THEN 'older'
+            	ELSE 'remaining'
+            END AS category
+            FROM expenses e
+            LEFT JOIN first_unpaid fu ON fu.expense_id = e.expense_id
+            WHERE e.wallet_id = :wallet_id
+            AND e.payment_id IS NULL
+            ORDER BY e.date ASC
+        """
+        
+        params = {"start_date": start_date,
+                  "end_date": end_date,
+                  "wallet_id": wallet_id}
+        
+        rows = self.db.execute(query, params, commit = False).fetchall()
+
+        result = {"current": [],
+                  "older": [],
+                  "remaining": []}
+
+        for r in rows:
+            category = r[-1]
+            result[category].append(r)
+
+        return result
