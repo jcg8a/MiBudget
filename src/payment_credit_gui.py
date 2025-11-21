@@ -188,7 +188,7 @@ class PaymentCreditGui(tk.Toplevel):
         self.expenses_tree.item(other_expenses, open=True)
 
         self.expenses_tree.tag_configure("older", background="lightyellow")
-        self.total_outstanding.set(f"Total: {total_amount}")
+        self.update_total_selected()
 
     
     def update_total_selected(self, event = None):
