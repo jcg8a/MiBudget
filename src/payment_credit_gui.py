@@ -78,6 +78,7 @@ class PaymentCreditGui(tk.Toplevel):
         columns = ("id", "expense_id", "date", "installment_number", "amount_installment", "source", "tag_id", "comment", "min_id", "category")
         #self.expenses_tree = ttk.Treeview(self, columns=columns, show="headings", height=8)
         self.expenses_tree = ttk.Treeview(self, columns=columns, show="tree headings", selectmode="extended", height=8)
+        self.expenses_tree.bind("<<TreeviewSelect>>", self.update_total_selected)
 
         for col in columns:
             self.expenses_tree.heading(col, text=col.capitalize())
